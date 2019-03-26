@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         etTarget = findViewById(R.id.et_target);
         tvResult = findViewById(R.id.tv_result);
 
-
         findViewById(R.id.btn_submit).setOnClickListener(this);
     }
 
