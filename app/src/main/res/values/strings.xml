@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">尋找子字串</string>
+    <string name="interval_count">間隔數量</string>
+    <string name="end_with">結尾</string>
+    <string name="start_with">開頭</string>
+    <string name="submit">送出</string>
+    <string name="target">目標字串</string>
+</resources>
