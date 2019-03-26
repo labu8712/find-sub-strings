@@ -33,11 +33,11 @@
             android:textSize="20sp" />
 
         <EditText
-            android:id="@+id/et_interval_count"
+            android:id="@+id/et_interval"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="@string/interval_count"
+            android:hint="@string/interval"
             android:inputType="number"
             android:textSize="20sp" />
 

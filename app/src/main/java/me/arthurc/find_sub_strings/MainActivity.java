@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText etStartWith;
     private EditText etEndWith;
-    private EditText etIntervalCount;
+    private EditText etInterval;
     private EditText etTarget;
     private TextView tvResult;
 
@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         etStartWith = findViewById(R.id.et_start_with);
         etEndWith = findViewById(R.id.et_end_with);
-        etIntervalCount = findViewById(R.id.et_interval_count);
+        etInterval = findViewById(R.id.et_interval);
         etTarget = findViewById(R.id.et_target);
         tvResult = findViewById(R.id.tv_result);
 
@@ -53,19 +53,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void doSubmit() {
-        int interval = Integer.parseInt(etIntervalCount.getText().toString());
+    private boolean validEditText() {
+        ArrayList<EditText> editTexts = new ArrayList<>();
 
-        if (interval < 0) {
-            etIntervalCount.setText("");
-            Toast.makeText(this, "間隔需要大於 0", Toast.LENGTH_SHORT).show();
-            return;
+        editTexts.add(etStartWith);
+        editTexts.add(etEndWith);
+        editTexts.add(etInterval);
+        editTexts.add(etTarget);
+
+        boolean hasError = false;
+
+        for (EditText editText: editTexts) {
+            if (editText.getText().toString().isEmpty()) {
+                editText.setError("此欄位不得空白");
+                hasError = true;
+            }
         }
 
+        return !hasError;
+    }
+
+    private void doSubmit() {
+        if (!validEditText()) return;
+
+        String interval = etInterval.getText().toString();
         String startWith = etStartWith.getText().toString();
         String endWith = etEndWith.getText().toString();
-        String p = String.format(Locale.getDefault(), "%s.{%d,}%s", startWith, interval, endWith);
+
         String s = etTarget.getText().toString();
+        String p = String.format(Locale.getDefault(), "%s.{%s,}%s", startWith, interval, endWith);
 
         findResult(s, p);
 
