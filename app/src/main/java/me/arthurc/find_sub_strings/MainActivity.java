@@ -85,6 +85,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         findResult(s, p);
 
+        if (result.isEmpty()) {
+            Toast.makeText(this, "找不到任何結果！", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         // Set output
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < result.size(); i++) {
