@@ -7,18 +7,38 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mobsandgeeks.saripaar.ValidationError;
+import com.mobsandgeeks.saripaar.Validator;
+import com.mobsandgeeks.saripaar.annotation.Min;
+import com.mobsandgeeks.saripaar.annotation.NotEmpty;
+
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, Validator.ValidationListener {
+
+    // UI
+    @NotEmpty(message = "這個欄位是必填的")
     private EditText etStartWith;
+
+    @NotEmpty(message = "這個欄位是必填的")
     private EditText etEndWith;
+
+    @NotEmpty(message = "這個欄位是必填的")
+    @Min(value = 0, message = "此欄位的最小值為 0")
     private EditText etInterval;
+
+    @NotEmpty(message = "這個欄位是必填的")
     private EditText etTarget;
+
     private TextView tvResult;
 
+    // Var
+    private Validator validator;
+    private boolean validated = false;
     private ArrayList<String> result = new ArrayList<>();
 
     @Override
@@ -31,6 +51,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         etInterval = findViewById(R.id.et_interval);
         etTarget = findViewById(R.id.et_target);
         tvResult = findViewById(R.id.tv_result);
+
+        validator = new Validator(this);
+        validator.setValidationListener(this);
 
         findViewById(R.id.btn_submit).setOnClickListener(this);
     }
@@ -53,29 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private boolean validEditText() {
-        ArrayList<EditText> editTexts = new ArrayList<>();
-
-        editTexts.add(etStartWith);
-        editTexts.add(etEndWith);
-        editTexts.add(etInterval);
-        editTexts.add(etTarget);
-
-        boolean hasError = false;
-
-        for (EditText editText: editTexts) {
-            if (editText.getText().toString().isEmpty()) {
-                editText.setError("此欄位不得空白");
-                hasError = true;
-            }
-        }
-
-        return !hasError;
-    }
-
     private void doSubmit() {
-        if (!validEditText()) return;
-
         String interval = etInterval.getText().toString();
         String startWith = etStartWith.getText().toString();
         String endWith = etEndWith.getText().toString();
@@ -108,10 +109,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    public void onValidationSucceeded() {
+        validated = true;
+    }
+
+    @Override
+    public void onValidationFailed(List<ValidationError> errors) {
+        validated = false;
+
+        for (ValidationError error : errors) {
+            View view = error.getView();
+            String message = error.getCollatedErrorMessage(this);
+
+            if (view instanceof EditText) {
+                ((EditText) view).setError(message);
+            } else {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
     public void onClick(View view) {
+        validator.validate();
+
         switch (view.getId()) {
             case R.id.btn_submit:
-                doSubmit();
+                if (validated) {
+                    doSubmit();
+                }
+
                 break;
         }
     }
