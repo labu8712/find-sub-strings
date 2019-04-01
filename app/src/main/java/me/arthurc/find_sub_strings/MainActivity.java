@@ -1,8 +1,11 @@
 package me.arthurc.find_sub_strings;
 
+import android.content.Context;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -91,6 +94,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
 
+        closeKeyboard();
+
         // Set output
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < result.size(); i++) {
@@ -104,8 +109,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         tvResult.setText(stringBuilder.toString());
 
+        String toastMessage =  String.format(Locale.getDefault(), "找到 %d 個結果", result.size());
+        Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show();
+
         // Clean up
         result.clear();
+    }
+
+    private void closeKeyboard() {
+        if (getCurrentFocus() ==  null) {
+            return;
+        }
+
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
     @Override
