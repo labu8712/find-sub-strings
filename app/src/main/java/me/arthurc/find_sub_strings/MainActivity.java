@@ -80,6 +80,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void doSubmit() {
+        closeKeyboard();
+
         String interval = etInterval.getText().toString();
         String startWith = etStartWith.getText().toString();
         String endWith = etEndWith.getText().toString();
@@ -93,8 +95,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "找不到任何結果！", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        closeKeyboard();
 
         // Set output
         StringBuilder stringBuilder = new StringBuilder();
