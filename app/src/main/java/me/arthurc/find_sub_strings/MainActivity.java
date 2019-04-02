@@ -18,7 +18,6 @@ import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, Validator.ValidationListener {
@@ -63,19 +62,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void findResult(String s, String p) {
         Pattern pattern = Pattern.compile(p);
-        Matcher matcher = pattern.matcher(s);
 
-        if (matcher.find()) {
-            String matchString = matcher.group();
+        for (int i = 0; i < s.length(); i ++) {
+            for (int j = i + 1; j <= s.length(); j++) {
+                String subString = s.substring(i, j);
 
-            if (result.contains(matchString)) {
-                return;
+                if (result.contains(subString)) {
+                    return;
+                }
+
+                if (pattern.matcher(subString).find()) {
+                    result.add(subString);
+                }
             }
-
-            result.add(matchString);
-
-            findResult(matchString.substring(1), p);
-            findResult(matchString.substring(0, matchString.length() - 1), p);
         }
     }
 
@@ -87,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String endWith = etEndWith.getText().toString();
 
         String s = etTarget.getText().toString();
-        String p = String.format(Locale.getDefault(), "%s.{%s,}%s", startWith, interval, endWith);
+        String p = String.format(Locale.getDefault(), "^%s.{%s,}%s$", startWith, interval, endWith);
 
         Log.d("Pattern:", p);
 
