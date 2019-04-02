@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void findResult(@NonNull String s, @NonNull String p) {
         Pattern pattern = Pattern.compile(p);
 
-        for (int i = 0; i < s.length(); i ++) {
+        for (int i = 0; i < s.length(); i++) {
             for (int j = i + 1; j <= s.length(); j++) {
                 String subString = s.substring(i, j);
 
