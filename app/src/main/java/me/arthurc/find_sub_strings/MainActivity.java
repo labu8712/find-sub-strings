@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void doSubmit() {
         closeKeyboard();
 
-        String interval = etInterval.getText().toString();
+        int interval = Integer.parseInt(etInterval.getText().toString());
         String startWith = etStartWith.getText().toString();
         String endWith = etEndWith.getText().toString();
 
