@@ -89,6 +89,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String s = etTarget.getText().toString();
         String p = String.format(Locale.getDefault(), "%s.{%s,}%s", startWith, interval, endWith);
 
+        Log.d("Pattern:", p);
+
         findResult(s, p);
 
         if (result.isEmpty()) {
