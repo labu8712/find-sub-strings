@@ -17,6 +17,8 @@ import com.mobsandgeeks.saripaar.annotation.Min;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -97,6 +99,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "找不到任何結果！", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        // Sort result
+        Collections.sort(result, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                if (o1.length() > o2.length()) {
+                    return 1;
+                } else {
+                    return o1.compareTo(o2);
+                }
+            }
+        });
 
         // Set output
         StringBuilder stringBuilder = new StringBuilder();
