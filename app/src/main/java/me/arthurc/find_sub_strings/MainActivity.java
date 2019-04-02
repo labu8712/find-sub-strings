@@ -103,12 +103,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Sort result
         Collections.sort(result, new Comparator<String>() {
             @Override
-            public int compare(String o1, String o2) {
-                if (o1.length() > o2.length()) {
-                    return 1;
-                } else {
-                    return o1.compareTo(o2);
-                }
+            public int compare(String s1, String s2) {
+                return s1.length() > s2.length() ? 1 : s1.compareTo(s2);
             }
         });
 
