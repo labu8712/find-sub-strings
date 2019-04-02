@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         tvResult.setText(stringBuilder.toString());
 
-        String toastMessage =  String.format(Locale.getDefault(), "找到 %d 個結果", result.size());
+        String toastMessage = String.format(Locale.getDefault(), "找到 %d 個結果", result.size());
         Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show();
 
         // Clean up
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void closeKeyboard() {
-        if (getCurrentFocus() ==  null) {
+        if (getCurrentFocus() == null) {
             return;
         }
 
