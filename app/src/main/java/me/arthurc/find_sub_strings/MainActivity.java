@@ -1,6 +1,7 @@
 package me.arthurc.find_sub_strings;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.btn_submit).setOnClickListener(this);
     }
 
-    private void findResult(String s, String p) {
+    private void findResult(@NonNull String s, @NonNull String p) {
         Pattern pattern = Pattern.compile(p);
 
         for (int i = 0; i < s.length(); i ++) {
