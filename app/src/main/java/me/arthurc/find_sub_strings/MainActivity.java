@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -19,8 +18,10 @@ import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, Validator.ValidationListener {
@@ -41,10 +42,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private TextView tvResult;
 
-    // Var
     private Validator validator;
     private boolean validated = false;
-    private ArrayList<String> result = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,55 +60,78 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         validator.setValidationListener(this);
 
         findViewById(R.id.btn_submit).setOnClickListener(this);
+        findViewById(R.id.btn_set_default).setOnClickListener(this);
+        findViewById(R.id.btn_clear).setOnClickListener(this);
     }
 
-    private void findResult(@NonNull String s, @NonNull String p) {
+    private ArrayList<String> findResult(@NonNull String s, @NonNull String p) {
         Pattern pattern = Pattern.compile(p);
+        ArrayList<String> result = new ArrayList<>();
+        ArrayList<String> targetList = new ArrayList<>();
 
-        for (int i = 0; i < s.length(); i++) {
-            for (int j = i + 1; j <= s.length(); j++) {
-                String subString = s.substring(i, j);
+        targetList.add(s);
 
-                if (result.contains(subString)) {
-                    return;
-                }
+        while (!targetList.isEmpty()) {
+            String target = targetList.get(0);
+            targetList.remove(0);
 
-                if (pattern.matcher(subString).find()) {
-                    result.add(subString);
-                }
+            Matcher matcher = pattern.matcher(target);
+            if (!matcher.find()) {
+                continue;
             }
+
+            String matchString = matcher.group();
+            if (result.contains(matchString)) {
+                continue;
+            }
+
+            result.add(matchString);
+            targetList.add(matchString.substring(1));
+            targetList.add(matchString.substring(0, matchString.length() - 1));
         }
+
+        return result;
     }
 
-    private void doSubmit() {
-        closeKeyboard();
+    private HashSet<String> findResultRecursive(@NonNull String s, @NonNull String p) {
+        Pattern pattern = Pattern.compile(p);
+        Matcher matcher = pattern.matcher(s);
+        HashSet<String> result = new HashSet<>();
 
-        int interval = Integer.parseInt(etInterval.getText().toString());
-        String startWith = etStartWith.getText().toString();
-        String endWith = etEndWith.getText().toString();
+        if (!matcher.find()) {
+            return result;
+        }
 
-        String s = etTarget.getText().toString();
-        String p = String.format(Locale.getDefault(), "^%s.{%s,}%s$", startWith, interval, endWith);
+        String matchString = matcher.group();
+        result.add(matchString);
+        result.addAll(findResultRecursive(matchString.substring(1), p));
+        result.addAll(findResultRecursive(matchString.substring(0, matchString.length() -1), p));
 
-        Log.d("Pattern:", p);
+        return result;
+    }
 
-        findResult(s, p);
-
+    private String resultToString(String title, ArrayList<String> result) {
         if (result.isEmpty()) {
-            Toast.makeText(this, "找不到任何結果！", Toast.LENGTH_SHORT).show();
-            return;
+            return "";
         }
 
         // Sort result
         Collections.sort(result, new Comparator<String>() {
             @Override
             public int compare(String s1, String s2) {
-                return s1.length() > s2.length() ? 1 : s1.compareTo(s2);
+                return Integer.compare(s1.length(), s2.length());
             }
         });
 
-        // Set output
+        String count = String.format(Locale.getDefault(), "（共 %d 個）：", result.size());
+
+        // Build result
         StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(title);
+        stringBuilder.append(count);
+        stringBuilder.append("\n");
+
         for (int i = 0; i < result.size(); i++) {
             if (i > 0) {
                 stringBuilder.append("\n");
@@ -119,13 +141,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             stringBuilder.append(". ");
             stringBuilder.append(result.get(i));
         }
-        tvResult.setText(stringBuilder.toString());
 
-        String toastMessage = String.format(Locale.getDefault(), "找到 %d 個結果", result.size());
-        Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show();
+        return stringBuilder.toString();
+    }
 
-        // Clean up
-        result.clear();
+    private void doSubmit() {
+        closeKeyboard();
+
+        int interval = Integer.parseInt(etInterval.getText().toString());
+        String startWith = etStartWith.getText().toString();
+        String endWith = etEndWith.getText().toString();
+        String s = etTarget.getText().toString();
+        String p = String.format(Locale.getDefault(), "%s.{%s,}%s", startWith, interval, endWith);
+
+        ArrayList<String> result1 = findResult(s, p);
+        ArrayList<String> result2 = new ArrayList<>(findResultRecursive(s, p));
+
+        if (result1.isEmpty() && result2.isEmpty()) {
+            Toast.makeText(this, "找不到任何結果！", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String sResult1 = resultToString("遞　回", result1);
+        String sResult2 = resultToString("非遞回", result2);
+        tvResult.setText(String.format(Locale.getDefault(), "%s\n\n%s", sResult1, sResult2));
     }
 
     private void closeKeyboard() {
@@ -160,16 +199,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        validator.validate();
-
         switch (view.getId()) {
             case R.id.btn_submit:
+                validator.validate();
                 tvResult.setText("");
 
                 if (validated) {
                     doSubmit();
                 }
 
+                break;
+
+            case R.id.btn_set_default:
+                String defaultTarget = "aba51bc2b";
+                etStartWith.setText("a");
+                etEndWith.setText("b");
+                etInterval.setText("1");
+                etTarget.setText(defaultTarget);
+                break;
+
+            case R.id.btn_clear:
+                etStartWith.setText("");
+                etEndWith.setText("");
+                etInterval.setText("");
+                etTarget.setText("");
+                tvResult.setText("");
                 break;
         }
     }

@@ -54,12 +54,32 @@
         tools:ignore="Autofill" />
 
     <Button
-        android:id="@+id/btn_submit"
+        android:id="@+id/btn_set_default"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:padding="5dp"
+        android:text="@string/set_default"
+        android:textAlignment="center"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/btn_submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:padding="5dp"
         android:text="@string/submit"
+        android:textAlignment="center"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/btn_clear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:padding="5dp"
+        android:text="@string/clear"
         android:textAlignment="center"
         android:textSize="20sp" />
 
