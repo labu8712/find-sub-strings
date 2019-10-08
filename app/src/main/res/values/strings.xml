@@ -7,4 +7,5 @@
     <string name="target">目標字串</string>
     <string name="set_default">設定測試資料</string>
     <string name="clear">清除</string>
+    <string name="default_target">aba51bc2b</string>
 </resources>

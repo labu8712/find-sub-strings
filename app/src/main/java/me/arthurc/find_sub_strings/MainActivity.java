@@ -211,11 +211,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.btn_set_default:
-                String defaultTarget = "aba51bc2b";
                 etStartWith.setText("a");
                 etEndWith.setText("b");
                 etInterval.setText("1");
-                etTarget.setText(defaultTarget);
+                etTarget.setText(R.string.default_target);
                 break;
 
             case R.id.btn_clear:
